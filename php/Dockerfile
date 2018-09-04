@@ -1,4 +1,5 @@
-FROM php:7.2.7-fpm-alpine3.7
+ARG PHP_VERSION=""
+FROM php:${PHP_VERSION:+${PHP_VERSION}-}fpm-alpine
 
 RUN apk update; \
     apk upgrade;
