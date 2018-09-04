@@ -1,13 +1,20 @@
 version: "3.2"
 services:
   php:
-    build: './php/'
+    build: 
+      context: './php/'
+      args:
+       PHP_VERSION: ${PHP_VERSION}
     networks:
       - backend
     volumes:
       - ./public_html/:/var/www/html/
+    container_name: php
   apache:
-    build: './apache/'
+    build:
+      context: './apache/'
+      args:
+       APACHE_VERSION: ${APACHE_VERSION}
     depends_on:
       - php
       - mysql
@@ -15,15 +22,17 @@ services:
       - frontend
       - backend
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
       - ./public_html/:/var/www/html/
+    container_name: apache
   mysql:
-    image: mysql:5.6.40
+    image: mysql:${MYSQL_VERSION:-latest}
     networks:
       - backend
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
+    container_name: mysql
 networks:
   frontend:
   backend:
