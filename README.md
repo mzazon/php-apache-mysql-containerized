@@ -34,8 +34,9 @@ $conn = new mysqli($host, $user, $pass);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-} 
-echo "Connected to MySQL successfully!";
+} else {
+  echo "Connected to MySQL successfully!";
+}
 ?>
 ```
 This code attempts to connect to a MySQL database using the mysqli interface from PHP. If successful, it prints a success. If not, it prints a failed message. 
@@ -51,13 +52,20 @@ This format allows for defining sets of services which make up an entire applica
 version: "3.2"
 services:
   php:
-    build: './php/'
+    build: 
+      context: './php/'
+      args:
+       PHP_VERSION: ${PHP_VERSION}
     networks:
       - backend
     volumes:
-      - ./public_html/:/var/www/html/
+      - ${PROJECT_ROOT}/:/var/www/html/
+    container_name: php
   apache:
-    build: './apache/'
+    build:
+      context: './apache/'
+      args:
+       APACHE_VERSION: ${APACHE_VERSION}
     depends_on:
       - php
       - mysql
@@ -65,18 +73,30 @@ services:
       - frontend
       - backend
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
-      - ./public_html/:/var/www/html/
+      - ${PROJECT_ROOT}/:/var/www/html/
+    container_name: apache
   mysql:
-    image: mysql:5.6.40
+    image: mysql:${MYSQL_VERSION:-latest}
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+            - data:/var/lib/mysql
     networks:
       - backend
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+    container_name: mysql
 networks:
   frontend:
   backend:
+volumes:
+    data:
 ```
 
 ### Decouple dependencies, run one process per container (PID 1)
