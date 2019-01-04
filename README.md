@@ -18,7 +18,7 @@ There are 5 simple files for this demo that you can clone from https://github.co
     └── index.php
 ```
 
-Once this structure is replicated or cloned with these files, and Docker installed locally, you can simply run "docker-compose up" from the root of the project to run this entire demo, and point your browser (or curl) to http://localhost:8080 to see the demo. We will get into what "docker-compose" is, and what makes up this basic demonstration in the following sections!
+Once this structure is replicated or cloned with these files, and Docker installed locally, you can simply run "docker-compose up" from the root of the project to run this entire demo, and point your browser (or curl) to http://localhost:80 to see the demo. We will get into what "docker-compose" is, and what makes up this basic demonstration in the following sections!
 
 We'll use the following simple PHP application to demonstrate everything:
 
@@ -65,7 +65,7 @@ services:
       - frontend
       - backend
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
       - ./public_html/:/var/www/html/
   mysql:
@@ -164,7 +164,7 @@ mysql_1   | Version: '5.6.40'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306
 Notice how these 3 daemons run on PID 1 inside of each container, this is considered a best-practice for building containers!
 
 ```
-$  curl localhost:8080
+$  curl localhost:80
 Hello Cloudreach!
 Attempting MySQL connection from php...
 Connected to MySQL successfully!
